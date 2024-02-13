@@ -1,8 +1,12 @@
-import { OrganizationSwitcher, SignOutButton, SignedIn } from "@clerk/nextjs"
+'use client'
+import { OrganizationSwitcher, SignOutButton, SignedIn, currentUser } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
+import {  useRouter } from "next/navigation";
+import { dark } from '@clerk/themes';
 
 export default function Topbar () {
+  const router = useRouter();
   return(
     <nav className="topbar">
       <Link 
@@ -19,7 +23,7 @@ export default function Topbar () {
         <div className="flex items-center gap-1">
           <div className="block md:hidden">
             <SignedIn>
-              <SignOutButton>
+              <SignOutButton signOutCallback={() => router.push('/sign-in')}>
                 <div className="flex cursor-pointer">
                   <Image
                     src= '/assets/logout.svg'
