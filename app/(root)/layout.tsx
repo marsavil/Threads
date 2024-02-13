@@ -29,7 +29,6 @@ export default function RootLayout ( { children }: { children: React.ReactNode }
             <RightSidebar />
           </main>
           <Bottombar />
-         
         </body>
       </html>
     </ClerkProvider>
