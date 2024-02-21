@@ -15,7 +15,6 @@ export default async function Page() {
     bio: userDB?.bio || '',
     image: userDB?.image ||user?.imageUrl
   };
-  console.log ( 'user from DB',userDB)
   if (userDB?.onboarded ) redirect( '/')
 
   return (
