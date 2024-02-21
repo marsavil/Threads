@@ -36,7 +36,6 @@ const ThreadCard = ({
   comments,
   isComment
 }: Props) => {
-  console.log('es un comentario',isComment)
   return (
     <article className={isComment ? 'flex w-full flex-col rounded-xl py-5 xs:px-20' : 'flex w-full flex-col rounded-xl bg-dark-2 p-7'}
     >
