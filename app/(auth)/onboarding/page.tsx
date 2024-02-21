@@ -1,10 +1,12 @@
+
 import AccountProfile from "@/components/forms/AccountProfile";
+import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
+import { redirect } from 'next/navigation';
 
 export default async function Page() {
-
   const user = await currentUser();
-  const userDB = {};
+  const userDB = await fetchUser(user.id);
   const userData = {
     id: user?.id,
     objectId: userDB?._id,
@@ -12,9 +14,10 @@ export default async function Page() {
     name: userDB?.name || user?.firstName || '',
     bio: userDB?.bio || '',
     image: userDB?.image ||user?.imageUrl
-
-
   };
+  console.log ( 'user from DB',userDB)
+  if (userDB?.onboarded ) redirect( '/')
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col justify-start px-10 py-20">
       <h1 className="head-text">Onboarding</h1>

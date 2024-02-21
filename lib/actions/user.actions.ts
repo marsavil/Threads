@@ -1,8 +1,9 @@
-'use server'
+"use server";
 
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
-import { connectToDB } from "../mongoose"
+import { connectToDB } from "../mongoose";
+import Thread from "../models/thread.model";
 
 interface Params {
   userId: string;
@@ -12,32 +13,67 @@ interface Params {
   image: string;
   path: string;
 }
-export async function updateUser(
-  {userId,
+export async function updateUser({
+  userId,
   username,
   name,
   bio,
   image,
-  path}: Params
-  ): Promise <void> {
+  path,
+}: Params): Promise<void> {
   connectToDB();
 
   try {
     await User.findOneAndUpdate(
-      { id: userId},
+      { id: userId },
       {
         username: username.toLowerCase(),
         name,
         bio,
         image,
-        onboarded: true
+        onboarded: true,
       },
-      { upsert: true}
+      { upsert: true }
     );
-    if ( path === '/profile/edit' ) {
-      revalidatePath(path)
+    if (path === "/profile/edit") {
+      revalidatePath(path);
     }
   } catch (error: any) {
-    throw new Error(`failed to create/update user: ${error.message}`)
+    throw new Error(`failed to create/update user: ${error.message}`);
+  }
+}
+export async function fetchUser(id: string) {
+  connectToDB();
+  try {
+    return await User.findOne({ id });
+    // .populate({
+    //   path: 'communities',
+    //   model: 'Community',
+    // })
+  } catch (error: any) {
+    throw new Error(`failed to fetch user: ${error.message}`);
+  }
+}
+export async function fetchUserPosts(userId: string) {
+  try {
+    connectToDB();
+    // find all threads authored by user with the given userId
+    //TODO populate community
+    const threads = await User.findOne({ id: userId }).populate({
+      path: "threads",
+      model: Thread,
+      populate: {
+        path: "children",
+        model: Thread,
+        populate: {
+          path: "author",
+          model: User,
+          select: "name image id",
+        },
+      },
+    });
+    return threads;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch posts: ${error.message}`);
   }
 }
